@@ -19,14 +19,33 @@ public class PlayerMovement : MonoBehaviour
 
     public GameObject PlayerShotLeft;
     public GameObject PlayerShotRight;
+    public GameObject PlayerShotUp;
 
     public GameObject ShotSpawner;
+    public GameObject ShotSpawnerUp;
+    public GameObject ShotSpawnerCrouch;
+
+    public int health= 10;
+    bool death = false;
+
+    bool shootingUp = false;
 
     //private Vector2 direction;
 
+    private void Start()
+    {
+        ShotSpawnerUp.SetActive(false);
+        ShotSpawnerCrouch.SetActive(false);
+    }
 
     void Update()
     {
+
+        if (health == 0)
+        {
+            death = true;
+        }
+
         DirectionFaced();
 
         horizontalMove = Input.GetAxisRaw("Horizontal") * speed;
@@ -42,11 +61,21 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             animator.SetBool("IsShootingUp", true);
+            speed = 0;
+
+            ShotSpawnerUp.gameObject.SetActive(true);
+            ShotSpawner.gameObject.SetActive(false);
+            shootingUp = true;
+
 
         } else if (Input.GetKeyUp(KeyCode.UpArrow))
         {
             animator.SetBool("IsShootingUp", false);
+            speed = 40;
 
+            ShotSpawnerUp.gameObject.SetActive(false);
+            ShotSpawner.gameObject.SetActive(true);
+            shootingUp = false;
         }
 
 
@@ -56,30 +85,71 @@ public class PlayerMovement : MonoBehaviour
             crouch = true;
             animator.SetBool("IsCrouching", true);
 
+            ShotSpawnerCrouch.gameObject.SetActive(true);
+            ShotSpawner.gameObject.SetActive(false);
+
         } else if (Input.GetButtonUp("Crouch"))
         {
             crouch = false;
             animator.SetBool("IsCrouching", false);
+
+            ShotSpawnerCrouch.gameObject.SetActive(false);
+            ShotSpawner.gameObject.SetActive(true);
         }
 
         if (Input.GetButtonDown("Shoot"))
         {
-            animator.SetBool("IsShooting", true);
 
-            if (direction == false)
+            if (shootingUp == true)
             {
                 if (Input.GetButtonDown("Shoot"))
                 {
-                    Instantiate(PlayerShotLeft, ShotSpawner.transform.position, Quaternion.identity);
+                    Instantiate(PlayerShotUp, ShotSpawnerUp.transform.position, Quaternion.identity);
                 }
-            }
+            } 
             else
             {
-                if (Input.GetButtonDown("Shoot"))
+                animator.SetBool("IsShooting", true);
+
+                if (direction == false)
                 {
-                    Instantiate(PlayerShotRight, ShotSpawner.transform.position, Quaternion.identity);
+                    if (crouch == true)
+                    {
+                        if (Input.GetButtonDown("Shoot"))
+                        {
+                            Instantiate(PlayerShotLeft, ShotSpawnerCrouch.transform.position, Quaternion.identity);
+                        }
+                    }
+                    else
+                    {
+                        if (Input.GetButtonDown("Shoot"))
+                        {
+                            Instantiate(PlayerShotLeft, ShotSpawner.transform.position, Quaternion.identity);
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    if (crouch == true)
+                    {
+                        if (Input.GetButtonDown("Shoot"))
+                        {
+                            Instantiate(PlayerShotRight, ShotSpawnerCrouch.transform.position, Quaternion.identity);
+                        }
+                    }
+                    else
+                    {
+                        if (Input.GetButtonDown("Shoot"))
+                        {
+                            Instantiate(PlayerShotRight, ShotSpawner.transform.position, Quaternion.identity);
+                        }
+                    }
+                    
                 }
             }
+
+            
         }
 
         else if (Input.GetButtonUp("Shoot"))
@@ -89,6 +159,14 @@ public class PlayerMovement : MonoBehaviour
 
         
 
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("EShot"))
+        {
+            health--;
+        }
     }
 
     public void OnLanding()
