@@ -11,13 +11,18 @@ public class BossGate : MonoBehaviour
 
     public static int enemiesRemaining;
 
+    public AudioSource emisorAudio;
+    public AudioClip door;
+
     // Start is called before the first frame update
     void Start()
     {
         opened.SetActive(false);
         closed.SetActive(true);
 
-        enemiesRemaining = 6;
+        enemiesRemaining = 7;
+
+        emisorAudio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -25,33 +30,33 @@ public class BossGate : MonoBehaviour
     {
         if (enemiesRemaining == 0)
         {
+            enemiesRemaining = 1;
+
+            DoorSound();
+
+
             opened.SetActive(true);
             closed.SetActive(false);
         }
         
     }
 
-    /*
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.collider.CompareTag("Player"))
-        {
-            enemiesRemaining = 1;
-
-            opened.SetActive(false);
-            closed.SetActive(true);
-        }
-    }*/
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
+            DoorSound();
+
             collider.enabled = false;
-            enemiesRemaining = 1;
 
             opened.SetActive(false);
             closed.SetActive(true);
         }
     }
+    public void DoorSound()
+    {
+        emisorAudio.PlayOneShot(door);
+
+    }
+
 }

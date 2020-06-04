@@ -12,6 +12,9 @@ public class Player_Shot_Up : MonoBehaviour
 
     private Rigidbody2D rigidBody2D;
 
+    public AudioSource emisorAudio;
+    public AudioClip playerShot;
+
     public float speed = 20;
 
     float destroyTime;
@@ -25,6 +28,10 @@ public class Player_Shot_Up : MonoBehaviour
         rigidBody2D = gameObject.GetComponent<Rigidbody2D>();
         transform.rotation = Quaternion.Euler(Vector3.forward * 90);
         rigidBody2D.velocity = Vector2.up * speed;
+
+        emisorAudio = GetComponent<AudioSource>();
+
+        ShotSound();
     }
 
     // Update is called once per frame
@@ -55,6 +62,11 @@ public class Player_Shot_Up : MonoBehaviour
 
             animator.SetBool("Impact", true);
         }
+    }
+
+    public void ShotSound()
+    {
+        emisorAudio.PlayOneShot(playerShot);
     }
 
 }

@@ -6,6 +6,10 @@ public class EnemyBehavior : MonoBehaviour
 {
     public Animator animator;
 
+    public AudioSource emisorAudio;
+    public AudioClip enemyShot;
+    public AudioClip enemyDeath;
+
     public GameObject healthDrop;
 
     public GameObject EnemyShot;
@@ -19,23 +23,21 @@ public class EnemyBehavior : MonoBehaviour
 
     int healthDropChance;
 
-    // Start is called before the first frame update
+
     void Start()
     {
         randomShot = Random.Range(0.3f, 2f);
         deathTime = 0.5f;
     }
 
-    // Update is called once per frame
     void Update()
     {
         healthDropChance = Random.Range(0, 2);
 
-
-        Debug.Log(healthDropChance);
         if (health <= 0)
         {
             animator.SetBool("IsDead", true);
+            emisorAudio.PlayOneShot(enemyDeath);
 
             deathTime -= Time.deltaTime;
 
@@ -47,6 +49,7 @@ public class EnemyBehavior : MonoBehaviour
                     Instantiate(healthDrop, transform.position, Quaternion.identity);
                 }
 
+
                 BossGate.enemiesRemaining--;
                 animator.SetBool("IsDead", false);
                 Destroy(gameObject);
@@ -55,6 +58,9 @@ public class EnemyBehavior : MonoBehaviour
         
         if (randomShot <= 0)
         {
+            emisorAudio = GetComponent<AudioSource>();
+            ShotSound();
+
             Instantiate(EnemyShot, EShotSpawner.transform.position, Quaternion.identity);
 
             randomShot = Random.Range(0.3f, 2f);
@@ -70,5 +76,10 @@ public class EnemyBehavior : MonoBehaviour
         {
             health--;
         }
+    }
+
+    public void ShotSound()
+    {
+        emisorAudio.PlayOneShot(enemyShot);
     }
 }

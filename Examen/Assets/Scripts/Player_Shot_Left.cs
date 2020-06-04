@@ -10,6 +10,9 @@ public class Player_Shot_Left : MonoBehaviour
     
     private Rigidbody2D rigidBody2D;
 
+    public AudioSource emisorAudio;
+    public AudioClip playerShot;
+
     public float speed = 20;
 
     float destroyTime;
@@ -25,6 +28,10 @@ public class Player_Shot_Left : MonoBehaviour
         rigidBody2D = gameObject.GetComponent<Rigidbody2D>();
 
         rigidBody2D.velocity = Vector2.left * speed;
+
+        emisorAudio = GetComponent<AudioSource>();
+
+        ShotSound();
     }
 
     // Update is called once per frame
@@ -57,6 +64,11 @@ public class Player_Shot_Left : MonoBehaviour
             animator.SetBool("Impact", true);
 
         }
+    }
+
+    public void ShotSound()
+    {
+        emisorAudio.PlayOneShot(playerShot);
     }
 
 }

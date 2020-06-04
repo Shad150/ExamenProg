@@ -17,6 +17,8 @@ public class PlayerMovement : MonoBehaviour
 
     public bool direction = true;
 
+    public HealthBar healthBar;
+
     public GameObject PlayerShotLeft;
     public GameObject PlayerShotRight;
     public GameObject PlayerShotUp;
@@ -28,30 +30,36 @@ public class PlayerMovement : MonoBehaviour
     public Collider2D collider;
     public Collider2D colliderBase;
 
-    public int health= 10;
+    public AudioSource emissor;
+    public AudioClip pasos, deathSound;
+
+    public static int health= 10;
     bool death = false;
     float deathTime;
 
     bool shootingUp = false;
 
+    public static bool deadMenu = false;
 
     private void Start()
     {
         ShotSpawnerUp.SetActive(false);
         ShotSpawnerCrouch.SetActive(false);
         deathTime = 1.9f;
+        healthBar.SetMaxHealth(health);
     }
 
     void Update()
     {
-        Debug.Log(health);
+        healthBar.SetHealth(health);
+
 
         if (health > 10)
         {
             health = 10;
         }
 
-        if (health == 0)
+        if (health <= 0)
         {
             animator.SetBool("IsDead", true);
             animator.SetBool("IsJumping", false);
@@ -64,10 +72,13 @@ public class PlayerMovement : MonoBehaviour
 
             Time.timeScale = 0.5f;
             death = true;
+            DeathSound();
         }
 
         if(deathTime <= 0)
         {
+
+            deadMenu = true;
             Destroy(gameObject);
         }
         
@@ -239,6 +250,16 @@ public class PlayerMovement : MonoBehaviour
         }
 
         return;
+    }
+
+    public void Pasos()
+    {
+        emissor.PlayOneShot(pasos);
+    }
+
+    public void DeathSound()
+    {
+        emissor.PlayOneShot(deathSound);
     }
 
 }

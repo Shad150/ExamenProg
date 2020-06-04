@@ -10,6 +10,9 @@ public class Player_Shot_Right : MonoBehaviour
 
     private Rigidbody2D rigidBody2D;
 
+    public AudioSource emisorAudio;
+    public AudioClip playerShot;
+
     public Collider2D collider;
 
     public float speed = 20;
@@ -26,6 +29,10 @@ public class Player_Shot_Right : MonoBehaviour
         rigidBody2D = gameObject.GetComponent<Rigidbody2D>();
 
         rigidBody2D.velocity = Vector2.right * speed;
+
+        emisorAudio = GetComponent<AudioSource>();
+
+        ShotSound();
     }
 
     // Update is called once per frame
@@ -56,6 +63,11 @@ public class Player_Shot_Right : MonoBehaviour
 
             animator.SetBool("Impact", true);
         }
+    }
+
+    public void ShotSound()
+    {
+        emisorAudio.PlayOneShot(playerShot);
     }
 
 }

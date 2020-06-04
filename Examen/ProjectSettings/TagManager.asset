@@ -51,6 +51,9 @@ TagManager:
   - name: BG2
     uniqueID: 1337793531
     locked: 0
+  - name: Amilos
+    uniqueID: 403458079
+    locked: 0
   - name: PropsBehind
     uniqueID: 379845297
     locked: 0
