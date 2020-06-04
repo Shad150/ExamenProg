@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - PShot
+  - EShot
+  - Enemy
+  - Health
   layers:
   - Default
   - TransparentFX
@@ -48,14 +51,17 @@ TagManager:
   - name: BG2
     uniqueID: 1337793531
     locked: 0
+  - name: PropsBehind
+    uniqueID: 379845297
+    locked: 0
   - name: Surface
     uniqueID: 1711836227
     locked: 0
-  - name: Props
-    uniqueID: 3877053397
-    locked: 0
   - name: Player
     uniqueID: 1978717609
+    locked: 0
+  - name: Props
+    uniqueID: 3877053397
     locked: 0
   - name: Overlay
     uniqueID: 3766664711

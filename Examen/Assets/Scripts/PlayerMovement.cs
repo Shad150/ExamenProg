@@ -25,137 +25,172 @@ public class PlayerMovement : MonoBehaviour
     public GameObject ShotSpawnerUp;
     public GameObject ShotSpawnerCrouch;
 
+    public Collider2D collider;
+    public Collider2D colliderBase;
+
     public int health= 10;
     bool death = false;
+    float deathTime;
 
     bool shootingUp = false;
 
-    //private Vector2 direction;
 
     private void Start()
     {
         ShotSpawnerUp.SetActive(false);
         ShotSpawnerCrouch.SetActive(false);
+        deathTime = 1.9f;
     }
 
     void Update()
     {
+        Debug.Log(health);
+
+        if (health > 10)
+        {
+            health = 10;
+        }
 
         if (health == 0)
         {
+            animator.SetBool("IsDead", true);
+            animator.SetBool("IsJumping", false);
+            deathTime -= Time.deltaTime;
+
+            collider.enabled = false;
+            colliderBase.enabled = false;
+
+            controller.Constrain();
+
+            Time.timeScale = 0.5f;
             death = true;
         }
 
-        DirectionFaced();
-
-        horizontalMove = Input.GetAxisRaw("Horizontal") * speed;
-
-        animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
-
-        if (Input.GetKeyDown(KeyCode.Z))
+        if(deathTime <= 0)
         {
-            jump = true;
-            animator.SetBool("IsJumping", true);
+            Destroy(gameObject);
         }
-
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        
+        if (death == false)
         {
-            animator.SetBool("IsShootingUp", true);
-            speed = 0;
+            DirectionFaced();
 
-            ShotSpawnerUp.gameObject.SetActive(true);
-            ShotSpawner.gameObject.SetActive(false);
-            shootingUp = true;
+            horizontalMove = Input.GetAxisRaw("Horizontal") * speed;
 
+            animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
 
-        } else if (Input.GetKeyUp(KeyCode.UpArrow))
-        {
-            animator.SetBool("IsShootingUp", false);
-            speed = 40;
-
-            ShotSpawnerUp.gameObject.SetActive(false);
-            ShotSpawner.gameObject.SetActive(true);
-            shootingUp = false;
-        }
-
-
-
-        if (Input.GetButtonDown("Crouch"))
-        {
-            crouch = true;
-            animator.SetBool("IsCrouching", true);
-
-            ShotSpawnerCrouch.gameObject.SetActive(true);
-            ShotSpawner.gameObject.SetActive(false);
-
-        } else if (Input.GetButtonUp("Crouch"))
-        {
-            crouch = false;
-            animator.SetBool("IsCrouching", false);
-
-            ShotSpawnerCrouch.gameObject.SetActive(false);
-            ShotSpawner.gameObject.SetActive(true);
-        }
-
-        if (Input.GetButtonDown("Shoot"))
-        {
-
-            if (shootingUp == true)
+            if (Input.GetKeyDown(KeyCode.Z))
             {
-                if (Input.GetButtonDown("Shoot"))
-                {
-                    Instantiate(PlayerShotUp, ShotSpawnerUp.transform.position, Quaternion.identity);
-                }
-            } 
-            else
-            {
-                animator.SetBool("IsShooting", true);
+                jump = true;
+                animator.SetBool("IsJumping", true);
+            }
 
-                if (direction == false)
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                animator.SetBool("IsShootingUp", true);
+                speed = 0;
+
+                ShotSpawnerUp.gameObject.SetActive(true);
+                ShotSpawner.gameObject.SetActive(false);
+                shootingUp = true;
+
+
+            }
+            else if (Input.GetKeyUp(KeyCode.UpArrow))
+            {
+                animator.SetBool("IsShootingUp", false);
+                speed = 40;
+
+                ShotSpawnerUp.gameObject.SetActive(false);
+                ShotSpawner.gameObject.SetActive(true);
+                shootingUp = false;
+            }
+
+
+
+            if (Input.GetButtonDown("Crouch"))
+            {
+                crouch = true;
+                animator.SetBool("IsCrouching", true);
+                collider.enabled = false;
+
+                ShotSpawnerCrouch.gameObject.SetActive(true);
+                ShotSpawner.gameObject.SetActive(false);
+
+            }
+            else if (Input.GetButtonUp("Crouch"))
+            {
+                crouch = false;
+                animator.SetBool("IsCrouching", false);
+                collider.enabled = true;
+
+
+                ShotSpawnerCrouch.gameObject.SetActive(false);
+                ShotSpawner.gameObject.SetActive(true);
+            }
+
+            if (Input.GetButtonDown("Shoot"))
+            {
+
+                if (shootingUp == true)
                 {
-                    if (crouch == true)
+                    if (Input.GetButtonDown("Shoot"))
                     {
-                        if (Input.GetButtonDown("Shoot"))
-                        {
-                            Instantiate(PlayerShotLeft, ShotSpawnerCrouch.transform.position, Quaternion.identity);
-                        }
+                        Instantiate(PlayerShotUp, ShotSpawnerUp.transform.position, Quaternion.identity);
                     }
-                    else
-                    {
-                        if (Input.GetButtonDown("Shoot"))
-                        {
-                            Instantiate(PlayerShotLeft, ShotSpawner.transform.position, Quaternion.identity);
-                        }
-                    }
-                    
                 }
                 else
                 {
-                    if (crouch == true)
+                    animator.SetBool("IsShooting", true);
+
+                    if (direction == false)
                     {
-                        if (Input.GetButtonDown("Shoot"))
+                        if (crouch == true)
                         {
-                            Instantiate(PlayerShotRight, ShotSpawnerCrouch.transform.position, Quaternion.identity);
+                            if (Input.GetButtonDown("Shoot"))
+                            {
+                                Instantiate(PlayerShotLeft, ShotSpawnerCrouch.transform.position, Quaternion.identity);
+                            }
                         }
+                        else
+                        {
+                            if (Input.GetButtonDown("Shoot"))
+                            {
+                                Instantiate(PlayerShotLeft, ShotSpawner.transform.position, Quaternion.identity);
+                            }
+                        }
+
                     }
                     else
                     {
-                        if (Input.GetButtonDown("Shoot"))
+                        if (crouch == true)
                         {
-                            Instantiate(PlayerShotRight, ShotSpawner.transform.position, Quaternion.identity);
+                            if (Input.GetButtonDown("Shoot"))
+                            {
+                                Instantiate(PlayerShotRight, ShotSpawnerCrouch.transform.position, Quaternion.identity);
+                            }
                         }
+                        else
+                        {
+                            if (Input.GetButtonDown("Shoot"))
+                            {
+                                Instantiate(PlayerShotRight, ShotSpawner.transform.position, Quaternion.identity);
+                            }
+                        }
+
                     }
-                    
                 }
+
+
             }
 
-            
+            else if (Input.GetButtonUp("Shoot"))
+            {
+                animator.SetBool("IsShooting", false);
+            }
         }
 
-        else if (Input.GetButtonUp("Shoot"))
-        {
-            animator.SetBool("IsShooting", false);
-        }
+        
 
         
 
@@ -163,9 +198,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("EShot"))
+        
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("EShot"))
         {
             health--;
+        } else if (collision.collider.CompareTag("Health"))
+        {
+            health += 2;
         }
     }
 
